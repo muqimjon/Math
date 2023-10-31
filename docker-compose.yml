@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  math:
+    image: muqimjon/math
+    container_name: math
+    restart: always
+    ports:
+      - 5000:8080
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

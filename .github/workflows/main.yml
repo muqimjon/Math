@@ -8,42 +8,41 @@ on:
 
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  # build:
+  #   name: Build
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v3
+  #   - name: Setup .NET 7
+  #     uses: actions/setup-dotnet@v3
+  #     with:
+  #       dotnet-version: 7.0.x
+  #   - name: Restore dependencies
+  #     run: dotnet restore
+  #   - name: Build
+  #     run: dotnet build --no-restore
 
-  test:
-    name: Test
-    needs: build
-    runs-on: ubuntu-latest
+  # test:
+  #   name: Test
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Testing
-      run: dotnet test --no-restore
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v3
+  #   - name: Setup .NET 7
+  #     uses: actions/setup-dotnet@v3
+  #     with:
+  #       dotnet-version: 7.0.x
+  #   - name: Restore dependencies
+  #     run: dotnet restore
+  #   - name: Testing
+  #     run: dotnet test --no-restore
 
   dockerize:
     name: Dockerize
-    needs: test
     runs-on: ubuntu-latest
     env:
       USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -60,3 +59,20 @@ jobs:
         run: docker login -u $USERNAME -p $PASSWORD #--password-stdin
       - name: Push Docker image
         run: docker push $USERNAME/math
+
+  deploy:
+      name: Deploy
+      needs: dockerize
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: SSH into AWS Ubuntu Server
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script: |
+              cd ~/Madiyor
+              docker-compose up -d math

@@ -27,4 +27,14 @@ public class MathController : ControllerBase
         var result = await service.SubAsync(a, b);
         return Ok(new { result = result });
     }
+
+
+    [HttpGet("mul")]
+    public async Task<IActionResult> MulAsync([FromQuery] long a,
+        long b,
+        [FromServices] IMathService service)
+    {
+        var result = await service.MulAsync(a, b);
+        return Ok(new { result = result });
+    }
 }

@@ -41,4 +41,20 @@ public class MathServices
 
         await Assert.ThrowsAsync<OverflowException>(task);
     }
+
+
+
+    [Fact]
+    public void ShouldSubstractCorrect()
+    {
+        var mathService = service.GetRequiredService<IMathService>();
+
+        var a = 3;
+        var b = 1;
+
+        var result = mathService.SubAsync(a, b)
+            .GetAwaiter().GetResult();
+
+        Assert.Equal(2, result);
+    }
 }

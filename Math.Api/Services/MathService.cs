@@ -7,4 +7,10 @@ public class MathService : IMathService
         var result = checked(a + b);
         return Task.FromResult(result);
     }
+
+    public Task<long> SubAsync(long a, long b)
+    {
+        var result = checked(a - b);
+        return Task.FromResult(result);
+    }
 }
